@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechVibe - Modern Blog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links li a:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .nav-links li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links li a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            transition: 0.3s;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            padding: 4rem 0;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><defs><radialGradient id="a" cx=".66" cy=".5" r=".5"><stop offset="0" stop-color="%23ffffff" stop-opacity=".1"/><stop offset="1" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="25" cy="10" r="10" fill="url(%23a)"/><circle cx="75" cy="10" r="10" fill="url(%23a)"/></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0;
+            animation: slideUp 1s ease forwards;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: slideUp 1s ease 0.3s forwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: slideUp 1s ease 0.6s forwards;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Main Content */
+        main {
+            background: white;
+            margin: 2rem 0;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        /* Blog Posts */
+        .blog-posts {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .post {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .post:hover::before {
+            transform: scaleY(1);
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .post-meta span {
+            background: #e9ecef;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .post h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .post p {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .read-more {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .read-more:hover {
+            color: #764ba2;
+        }
+
+        .read-more::after {
+            content: ' →';
+            transition: transform 0.3s ease;
+        }
+
+        .read-more:hover::after {
+            transform: translateX(5px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .widget {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .widget h3 {
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .widget ul {
+            list-style: none;
+        }
+
+        .widget ul li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .widget ul li:hover {
+            padding-left: 10px;
+            color: #667eea;
+        }
+
+        .widget ul li a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .search-box button {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-box button:hover {
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        /* Newsletter */
+        .newsletter {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+        }
+
+        .newsletter input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 25px;
+            text-align: center;
+        }
+
+        .newsletter button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Footer */
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+    <header id="header">
+        <nav class="container">
+            <a href="#" class="logo">TechVibe</a>
+            <ul class="nav-links">
+                <li><a href="#" data-section="home">Home</a></li>
+                <li><a href="#" data-section="about">About</a></li>
+                <li><a href="#" data-section="blog">Blog</a></li>
+                <li><a href="#" data-section="contact">Contact</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Welcome to TechVibe</h1>
+                <p>Discover the latest in technology, web development, and digital innovation</p>
+                <a href="#" class="cta-button">Start Reading</a>
+            </div>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="content-wrapper">
+            <section class="blog-posts" id="blog-posts">
+                <!-- Posts will be dynamically loaded here -->
+            </section>
+
+            <aside class="sidebar">
+                <div class="widget search-widget">
+                    <h3>Search</h3>
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search posts...">
+                        <button type="button" onclick="searchPosts()">🔍</button>
+                    </div>
+                </div>
+
+                <div class="widget">
+                    <h3>Recent Posts</h3>
+                    <ul id="recent-posts">
+                        <!-- Recent posts will be populated by JavaScript -->
+                    </ul>
+                </div>
+
+                <div class="widget">
+                    <h3>Categories</h3>
+                    <ul>
+                        <li><a href="#" onclick="filterByCategory('javascript')">JavaScript</a></li>
+                        <li><a href="#" onclick="filterByCategory('css')">CSS</a></li>
+                        <li><a href="#" onclick="filterByCategory('react')">React</a></li>
+                        <li><a href="#" onclick="filterByCategory('nodejs')">Node.js</a></li>
+                        <li><a href="#" onclick="filterByCategory('design')">Design</a></li>
+                    </ul>
+                </div>
+
+                <div class="widget newsletter">
+                    <h3>Newsletter</h3>
+                    <p>Stay updated with our latest posts!</p>
+                    <input type="email" id="newsletter-email" placeholder="Your email address">
+                    <button onclick="subscribeNewsletter()">Subscribe</button>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="social-links">
+                <a href="#">📘</a>
+                <a href="#">🐦</a>
+                <a href="#">📸</a>
+                <a href="#">💼</a>
+            </div>
+            <p>&copy; 2025 TechVibe. All rights reserved. Made with ❤️ for developers.</p>
+        </div>
+    </footer>
+
+    <button class="scroll-top" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // Sample blog posts data
+        const blogPosts = [
+            {
+                id: 1,
+                title: "The Future of JavaScript: ES2025 Features",
+                content: "Explore the latest JavaScript features coming in 2025, including enhanced async operations, better error handling, and improved performance optimizations.",
+                category: "javascript",
+                date: "2025-07-28",
+                author: "Sarah Chen",
+                readTime: "8 min read"
+            },
+            {
+                id: 2,
+                title: "Mastering CSS Grid and Flexbox",
+                content: "Learn advanced layout techniques with CSS Grid and Flexbox. Create responsive designs that work beautifully across all devices and screen sizes.",
+                category: "css",
+                date: "2025-07-25",
+                author: "Mike Johnson",
+                readTime: "12 min read"
+            },
+            {
+                id: 3,
+                title: "React 19: What's New and Exciting",
+                content: "Discover the groundbreaking features in React 19, including improved server components, better performance, and new developer tools.",
+                category: "react",
+                date: "2025-07-22",
+                author: "Emily Rodriguez",
+                readTime: "10 min read"
+            },
+            {
+                id: 4,
+                title: "Building Scalable APIs with Node.js",
+                content: "Best practices for creating robust, scalable APIs using Node.js, Express, and modern database technologies. Perfect for backend developers.",
+                category: "nodejs",
+                date: "2025-07-20",
+                author: "David Kim",
+                readTime: "15 min read"
+            },
+            {
+                id: 5,
+                title: "UI/UX Design Trends for 2025",
+                content: "Explore the latest design trends shaping user experiences in 2025, from micro-interactions to bold typography and sustainable design practices.",
+                category: "design",
+                date: "2025-07-18",
+                author: "Alex Thompson",
+                readTime: "7 min read"
+            }
+        ];
+
+        let currentPosts = [...blogPosts];
+        let isLoading = false;
+
+        // DOM Elements
+        const blogPostsContainer = document.getElementById('blog-posts');
+        const recentPostsList = document.getElementById('recent-posts');
+        const searchInput = document.getElementById('search-input');
+        const header = document.getElementById('header');
+        const scrollTopBtn = document.querySelector('.scroll-top');
+
+        // Initialize the blog
+        function initBlog() {
+            renderPosts(currentPosts);
+            renderRecentPosts();
+            setupEventListeners();
+        }
+
+        // Render blog posts
+        function renderPosts(posts) {
+            if (posts.length === 0) {
+                blogPostsContainer.innerHTML = '<div class="post"><h2>No posts found</h2><p>Try adjusting your search or filter criteria.</p></div>';
+                return;
+            }
+
+            blogPostsContainer.innerHTML = posts.map(post => `
+                <article class="post" data-category="${post.category}">
+                    <div class="post-meta">
+                        <span>📅 ${formatDate(post.date)}</span>
+                        <span>👤 ${post.author}</span>
+                        <span>⏱️ ${post.readTime}</span>
+                        <span class="category-tag">#${post.category}</span>
+                    </div>
+                    <h2>${post.title}</h2>
+                    <p>${post.content}</p>
+                    <a href="#" class="read-more" onclick="readPost(${post.id})">Read More</a>
+                </article>
+            `).join('');
+
+            // Add animation to posts
+            const posts = document.querySelectorAll('.post');
+            posts.forEach((post, index) => {
+                post.style.opacity = '0';
+                post.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    post.style.transition = 'all 0.5s ease';
+                    post.style.opacity = '1';
+                    post.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        }
+
+        // Render recent posts in sidebar
+        function renderRecentPosts() {
+            const recentPosts = blogPosts.slice(0, 3);
+            recentPostsList.innerHTML = recentPosts.map(post => `
+                <li><a href="#" onclick="readPost(${post.id})">${post.title}</a></li>
+            `).join('');
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+        }
+
+        // Search functionality
+        function searchPosts() {
+            const query = searchInput.value.toLowerCase().trim();
+            if (!query) {
+                currentPosts = [...blogPosts];
+            } else {
+                currentPosts = blogPosts.filter(post =>
+                    post.title.toLowerCase().includes(query) ||
+                    post.content.toLowerCase().includes(query) ||
+                    post.category.toLowerCase().includes(query) ||
+                    post.author.toLowerCase().includes(query)
+                );
+            }
+            renderPosts(currentPosts);
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentPosts = blogPosts.filter(post => post.category === category);
+            renderPosts(currentPosts);
+            
+            // Update active category visual feedback
+            const categoryLinks = document.querySelectorAll('[onclick^="filterByCategory"]');
+            categoryLinks.forEach(link => link.style.color = '');
+            event.target.style.color = '#667eea';
+        }
+
+        // Read full post
+        function readPost(postId) {
+            const post = blogPosts.find(p => p.id === postId);
+            if (post) {
+                alert(`Reading: ${post.title}\n\n${post.content}\n\nThis would typically open the full article page.`);
+            }
+        }
+
+        // Newsletter subscription
+        function subscribeNewsletter() {
+            const email = document.getElementById('newsletter-email').value;
+            if (email && validateEmail(email)) {
+                showNotification('Thank you for subscribing! 🎉');
+                document.getElementById('newsletter-email').value = '';
+            } else {
+                showNotification('Please enter a valid email address.', 'error');
+            }
+        }
+
+        // Email validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#4caf50' : '#f44336'};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Scroll to top
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Search on Enter key
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchPosts();
+                }
+            });
+
+            // Real-time search
+            searchInput.addEventListener('input', debounce(searchPosts, 300));
+
+            // Scroll effects
+            window.addEventListener('scroll', function() {
+                const scrolled = window.pageYOffset;
+                
+                // Header background opacity
+                if (scrolled > 50) {
+                    header.style.background = 'rgba(255, 255, 255, 0.98)';
+                } else {
+                    header.style.background = 'rgba(255, 255, 255, 0.95)';
+                }
+
+                // Show/hide scroll to top button
+                if (scrolled > 300) {
+                    scrollTopBtn.classList.add('show');
+                } else {
+                    scrollTopBtn.classList.remove('show');
+                }
+            });
+
+            // Hamburger menu
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            hamburger.addEventListener('click', function() {
+                navLinks.style.display = navLinks.style.display === 'flex' ? 'none' : 'flex';
+            });
+
+            // Smooth scrolling for navigation
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.getAttribute('data-section');
+                    if (section === 'home') {
+                        scrollToTop();
+                    }
+                });
+            });
+        }
+
+        // Debounce function for search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Add loading simulation for dynamic content
+        function simulateLoading() {
+            blogPostsContainer.innerHTML = '<div style="text-align: center; padding: 2rem;"><div class="loading"></div><p>Loading amazing content...</p></div>';
+            setTimeout(() => {
+                renderPosts(currentPosts);
+            }, 1000);
+        }
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Initialize blog when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initBlog();
+            
+            // Add CSS animation keyframes
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from {
+                        opacity: 0;
+                        transform: translateX(100%);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateX(0);
+                    }
+                }
+                
+                .notification {
+                    animation: slideIn 0.3s ease;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+
+        // Add some interactivity to posts
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('post') || e.target.closest('.post')) {
+                const post = e.target.closest('.post');
+                if (post && !e.target.classList.contains('read-more')) {
+                    post.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        post.style.transform = 'translateY(-5px)';
+                    }, 150);
+                }
+            }
+        });
+
+        // Add a "Load More" functionality simulation
+        function loadMorePosts() {
+            // This would typically fetch more posts from an API
+            const morePosts = [
+                {
+                    id: 6,
+                    title: "Advanced TypeScript Patterns",
+                    content: "Deep dive into advanced TypeScript patterns and techniques for building type-safe, maintainable applications.",
+                    category: "typescript",
+                    date: "2025-07-15",
+                    author: "Jordan Lee",
+                    readTime: "11 min read"
+                }
+            ];
+            
+            blogPosts.push(...morePosts);
+            currentPosts = [...blogPosts];
+            renderPosts(currentPosts);
+        }
+    </script>
+</body>
+</html>
